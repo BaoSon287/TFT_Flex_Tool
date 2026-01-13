@@ -1,0 +1,710 @@
+[
+  {
+    "name": "Anivia",
+    "cost": 1,
+    "traits": ["Freljord", "Thuật Sĩ"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Blitzcrank",
+    "cost": 1,
+    "traits": ["Zaun", "Dũng Sĩ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Caitlyn",
+    "cost": 1,
+    "traits": ["Piltover", "Viễn Kích"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Illaoi",
+    "cost": 1,
+    "traits": ["Bilgewater", "Đấu Sĩ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Jarvan IV",
+    "cost": 1,
+    "traits": ["Demacia", "Vệ Quân"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Jhin",
+    "cost": 1,
+    "traits": ["Ionia", "Xạ Thủ"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Lulu",
+    "cost": 1,
+    "traits": ["Yordle", "Pháp Sư"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Qiyana",
+    "cost": 1,
+    "traits": ["Ixtal", "Đồ Tể"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Rumble",
+    "cost": 1,
+    "traits": ["Yordle", "Vệ Quân"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Shen",
+    "cost": 1,
+    "traits": ["Ionia", "Đấu Sĩ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Sona",
+    "cost": 1,
+    "traits": ["Demacia", "Thuật Sĩ"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Viego",
+    "cost": 1,
+    "traits": ["Đảo Bóng Đêm", "Cực Tốc"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Kog'Maw",
+    "cost": 1,
+    "traits": ["Hư Không", "Pháp Sư","Viễn Kích"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Briar",
+    "cost": 1,
+    "traits": ["Noxus", "Đồ Tể","Dũng Sĩ"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Aphelios",
+    "cost": 2,
+    "traits": ["Targon"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Ashe",
+    "cost": 2,
+    "traits": ["Freljord", "Cực Tốc"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Bard",
+    "cost": 2,
+    "traits": [],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Cho'Gath",
+    "cost": 2,
+    "traits": ["Hư Không", "Dũng Sĩ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Ekko",
+    "cost": 2,
+    "traits": ["Zaun", "Nhiễu Loạn"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Graves",
+    "cost": 2,
+    "traits": ["Bilgewater", "Xạ Thủ"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Neeko",
+    "cost": 2,
+    "traits": ["Ixtal", "Pháp Sư", "Vệ Quân"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Orianna",
+    "cost": 2,
+    "traits": ["Piltover", "Thuật Sĩ"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Poppy",
+    "cost": 2,
+    "traits": ["Demacia", "Yordle", "Dũng Sĩ"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "Rek'Sai",
+    "cost": 2,
+    "traits": ["Hư Không", "Chinh Phạt"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Sion",
+    "cost": 2,
+    "traits": ["Noxus", "Đấu Sĩ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Teemo",
+    "cost": 2,
+    "traits": ["Yordle", "Viễn Kích"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Tristana",
+    "cost": 2,
+    "traits": ["Yordle", "Xạ Thủ"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Tryndamere",
+    "cost": 2,
+    "traits": ["Freljord", "Đồ Tể"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Twisted Fate",
+    "cost": 2,
+    "traits": ["Bilgewater", "Cực Tốc"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Vi",
+    "cost": 2,
+    "traits": ["Piltover", "Zaun", "Vệ Quân"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Xin Zhao",
+    "cost": 2,
+    "traits": ["Demacia", "Ionia", "Cảnh Vệ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Yasuo",
+    "cost": 2,
+    "traits": ["Ionia", "Đồ Tể"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Yorick",
+    "cost": 2,
+    "traits": ["Đảo Bóng Đêm", "Cảnh Vệ"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "Zoe",
+    "cost": 3,
+    "traits": ["Targon"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Vayne",
+    "cost": 3,
+    "traits": ["Demacia", "Viễn Kích"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Sejuani",
+    "cost": 3,
+    "traits": ["Freljord", "Vệ Quân"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Nautilus",
+    "cost": 3,
+    "traits": ["Bilgewater", "Dũng Sĩ", "Cảnh Vệ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Milio",
+    "cost": 3,
+    "traits": ["Ixtal", "Thuật Sĩ"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Malzahar",
+    "cost": 3,
+    "traits": ["Hư Không", "Nhiễu Loạn"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Loris",
+    "cost": 3,
+    "traits": ["Piltover", "Cảnh Vệ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Leona",
+    "cost": 3,
+    "traits": ["Targon"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "LeBlanc",
+    "cost": 3,
+    "traits": ["Noxus", "Thuật Sĩ"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Kobuko & Yuumi",
+    "cost": 3,
+    "traits": ["Yordle", "Đấu Sĩ", "Thuật Sĩ"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "Kennen",
+    "cost": 3,
+    "traits": ["Ionia", "Yordle", "Vệ Quân"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "Jinx",
+    "cost": 3,
+    "traits": ["Zaun", "Xạ Thủ"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Gwen",
+    "cost": 3,
+    "traits": ["Đảo Bóng Đêm", "Nhiễu Loạn"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Gangplank",
+    "cost": 3,
+    "traits": ["Bilgewater", "Đồ Tể", "Chinh Phạt"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Draven",
+    "cost": 3,
+    "traits": ["Noxus", "Cực Tốc"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Dr. Mundo",
+    "cost": 3,
+    "traits": ["Zaun", "Đấu Sĩ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Darius",
+    "cost": 3,
+    "traits": ["Noxus", "Vệ Quân"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "Ahri",
+    "cost": 3,
+    "traits": ["Ionia", "Pháp Sư"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Yunara",
+    "cost": 4,
+    "traits": ["Ionia", "Cực Tốc"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Yone",
+    "cost": 4,
+    "traits": ["Ionia", "Đồ Tể"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Ngộ Không",
+    "cost": 4,
+    "traits": ["Ionia", "Đấu Sĩ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Warwick",
+    "cost": 4,
+    "traits": ["Zaun", "Cực Tốc"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Veigar",
+    "cost": 4,
+    "traits": ["Yordle", "Pháp Sư"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Taric",
+    "cost": 4,
+    "traits": ["Targon"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Swain",
+    "cost": 4,
+    "traits": ["Noxus", "Pháp Sư", "Dũng Sĩ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Skarner",
+    "cost": 4,
+    "traits": ["Ixtal"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "Singed",
+    "cost": 4,
+    "traits": ["Zaun", "Dũng Sĩ"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "Seraphine",
+    "cost": 4,
+    "traits": ["Piltover", "Nhiễu Loạn"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Sứ Giả Khe Nứt",
+    "cost": 4,
+    "traits": ["Hư Không", "Đấu Sĩ"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "Renekton",
+    "cost": 4,
+    "traits": ["Shurima"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Nidalee",
+    "cost": 4,
+    "traits": ["Ixtal"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Nasus",
+    "cost": 4,
+    "traits": ["Shurima"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "Miss Fortune",
+    "cost": 4,
+    "traits": ["Bilgewater", "Xạ Thủ"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Lux",
+    "cost": 4,
+    "traits": ["Demacia", "Pháp Sư"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Lissandra",
+    "cost": 4,
+    "traits": ["Freljord", "Thuật Sĩ"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Kalista",
+    "cost": 4,
+    "traits": ["Đảo Bóng Đêm", "Chinh Phạt"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Kai'Sa",
+    "cost": 4,
+    "traits": ["Hư Không", "Viễn Kích"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Garen",
+    "cost": 4,
+    "traits": ["Demacia", "Vệ Quân"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Fizz",
+    "cost": 4,
+    "traits": ["Bilgewater", "Yordle"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Diana",
+    "cost": 4,
+    "traits": ["Targon"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Braum",
+    "cost": 4,
+    "traits": ["Freljord", "Cảnh Vệ"],
+    "roles": ["carry"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Bel'Veth",
+    "cost": 4,
+    "traits": ["Hư Không", "Đồ Tể"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Ambessa",
+    "cost": 4,
+    "traits": ["Noxus", "Chinh Phạt"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Tibbers",
+    "cost": 5,
+    "traits": ["Pháp Sư"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Zilean",
+    "cost": 5,
+    "traits": ["Thuật Sĩ"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Ziggs",
+    "cost": 5,
+    "traits": ["Zaun", "Yordle", "Viễn Kích"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Zaahen",
+    "cost": 7,
+    "traits": ["Darkin"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Xerath",
+    "cost": 5,
+    "traits": ["Shurima"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Volibear",
+    "cost": 5,
+    "traits": ["Freljord", "Đấu Sĩ"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Thresh",
+    "cost": 5,
+    "traits": ["Đảo Bóng Đêm", "Cảnh Vệ"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "Tahm Kench",
+    "cost": 5,
+    "traits": ["Bilgewater", "Đấu Sĩ"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "T-Hex",
+    "cost": 5,
+    "traits": ["Piltover", "Xạ Thủ"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Sylas",
+    "cost": 7,
+    "traits": ["Pháp Sư", "Vệ Quân"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Shyvana",
+    "cost": 5,
+    "traits": ["Dũng Sĩ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Sett",
+    "cost": 5,
+    "traits": ["Ionia"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Ryze",
+    "cost": 7,
+    "traits": [],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Ornn",
+    "cost": 5,
+    "traits": ["Cảnh Vệ"],
+    "roles": ["tank"],
+    "locked": false
+  },
+  {
+    "name": "Mel",
+    "cost": 5,
+    "traits": ["Noxus", "Nhiễu Loạn"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Lucian & Senna",
+    "cost": 5,
+    "traits": ["Xạ Thủ"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Kindred",
+    "cost": 5,
+    "traits": ["Cực Tốc"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Galio",
+    "cost": 5,
+    "traits": ["Demacia"],
+    "roles": ["tank"],
+    "locked": true
+  },
+  {
+    "name": "Fiddlesticks",
+    "cost": 5,
+    "traits": ["Chinh Phạt"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Brock",
+    "cost": 7,
+    "traits": ["Ixtal"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Baron Nashor",
+    "cost": 7,
+    "traits": ["Hư Không"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Azir",
+    "cost": 5,
+    "traits": ["Shurima", "Nhiễu Loạn"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Aurelion Sol",
+    "cost": 7,
+    "traits": ["Targon"],
+    "roles": ["carry"],
+    "locked": true
+  },
+  {
+    "name": "Annie",
+    "cost": 5,
+    "traits": ["Pháp Sư"],
+    "roles": ["carry"],
+    "locked": false
+  },
+  {
+    "name": "Aatrox",
+    "cost": 5,
+    "traits": ["Darkin", "Đồ Tể"],
+    "roles": ["carry"],
+    "locked": true
+  }
+]

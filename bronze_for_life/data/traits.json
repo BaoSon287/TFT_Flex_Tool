@@ -1,0 +1,106 @@
+{
+  "Đấu Sĩ": {
+    "thresholds": [2, 4, 6],
+    "type": "class"
+  },
+  "Vệ Quân": {
+    "thresholds": [2, 4, 6],
+    "type": "class"
+  },
+  "Xạ Thủ": {
+    "thresholds": [2, 4],
+    "type": "class"
+  },
+  "Thuật Sĩ": {
+    "thresholds": [2, 4],
+    "type": "class"
+  },
+  "Dũng Sĩ": {
+    "thresholds": [2, 4, 6],
+    "type": "class"
+  },
+  "Viễn Kích": {
+    "thresholds": [2, 3, 4, 5],
+    "type": "class"
+  },
+  "Nhiễu Loạn": {
+    "thresholds": [2, 4],
+    "type": "class"
+  },
+  "Cực Tốc": {
+    "thresholds": [2, 3, 4, 5],
+    "type": "class"
+  },
+  "Đồ Tể": {
+    "thresholds": [2, 4, 6],
+    "type": "class"
+  },
+  "Pháp Sư": {
+    "thresholds": [2, 4, 6],
+    "type": "class"
+  },
+  "Chinh Phạt": {
+    "thresholds": [2, 3, 4, 5],
+    "type": "class"
+  },
+  "Cảnh Vệ": {
+    "thresholds": [2, 3, 4, 5],
+    "type": "class"
+  },
+  "Bilgewater": {
+    "thresholds": [3, 5, 7, 10],
+    "type": "origin"
+  },
+  "Darkin": {
+    "thresholds": [1, 2, 3],
+    "type": "origin"
+  },
+  "Demacia": {
+    "thresholds": [3, 5, 7, 11],
+    "type": "origin"
+  },
+  "Ixtal": {
+    "thresholds": [3, 5, 7],
+    "type": "origin"
+  },
+  "Freljord": {
+    "thresholds": [3, 5, 7],
+    "type": "origin"
+  },
+  "Ionia": {
+    "thresholds": [3, 5, 7, 10],
+    "type": "origin"
+  },
+  "Noxus": {
+    "thresholds": [3, 5, 7, 10],
+    "type": "origin"
+  },
+  "Piltover": {
+    "thresholds": [2, 4, 6],
+    "type": "origin"
+  },
+  "Shurima": {
+    "thresholds": [2, 3, 4],
+    "type": "origin"
+  },
+  "Hư Không": {
+    "thresholds": [2, 4 , 6, 9],
+    "type": "origin"
+  },
+  "Yordle": {
+    "thresholds": [2, 4 , 6, 8, 10],
+    "type": "origin"
+  },
+  "Zaun": {
+    "thresholds": [3, 5, 7],
+    "type": "origin"
+  },
+  "Đảo Bóng Đêm": {
+    "thresholds": [2, 3, 4, 5],
+    "type": "origin"
+  },
+  "Targon": {
+    "thresholds": [1],
+    "type": "origin"
+  }
+}
