@@ -1,74 +1,121 @@
-const solveBtn = document.getElementById("solveBtn");
-const resultDiv = document.getElementById("result");
-const loadingDiv = document.getElementById("loading");
+const API = "http://127.0.0.1:8000"
 
-solveBtn.onclick = async () => {
-    const solver = document.getElementById("solver").value;
-    const maxTeam = parseInt(document.getElementById("maxTeam").value);
-    const timeLimit = parseFloat(document.getElementById("timeLimit").value);
+let forced = []
+let banned = []
+let emblems = {}
 
-    const forced = document
-        .getElementById("forced")
-        .value.split(",")
-        .map(s => s.trim())
-        .filter(Boolean);
+const forcedList = document.getElementById("forcedList")
+const bannedList = document.getElementById("bannedList")
+const emblemsDiv = document.getElementById("emblems")
+const resultBody = document.getElementById("result")
 
-    const banned = document
-        .getElementById("banned")
-        .value.split(",")
-        .map(s => s.trim())
-        .filter(Boolean);
+// ===== DEFAULT =====
+fetch(API + "/config/defaults")
+  .then(r => r.json())
+  .then(d => {
+    forced = d.forced
+    banned = d.banned
+    renderForced()
+    renderBanned()
+  })
 
-    const payload = {
-        max_team: maxTeam,
-        time_limit: timeLimit,
-        forced: forced,
-        banned: banned,
-        emblems: {}
-    };
+// ===== TRAITS =====
+fetch(API + "/data/traits")
+  .then(r => r.json())
+  .then(traits => {
+    traits.forEach(trait => {
+      const row = document.createElement("div")
+      row.className = "emblem-row"
 
-    resultDiv.innerHTML = "";
-    loadingDiv.classList.remove("hidden");
+      const label = document.createElement("span")
+      label.textContent = trait
 
-    try {
-        const res = await fetch(`/solve/${solver}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
+      const input = document.createElement("input")
+      input.type = "number"
+      input.min = 0
+      input.max = 5
+      input.value = 0
 
-        const data = await res.json();
-        renderResult(data);
-    } catch (err) {
-        resultDiv.innerHTML = `<p class="error">Error: ${err}</p>`;
-    } finally {
-        loadingDiv.classList.add("hidden");
+      input.onchange = () => {
+        const v = parseInt(input.value)
+        if (v > 0) emblems[trait] = v
+        else delete emblems[trait]
+      }
+
+      row.appendChild(label)
+      row.appendChild(input)
+      emblemsDiv.appendChild(row)
+    })
+  })
+
+// ===== FORCED / BANNED =====
+function addForced() {
+  const v = forcedInput.value.trim()
+  if (v && !forced.includes(v)) forced.push(v)
+  forcedInput.value = ""
+  renderForced()
+}
+
+function addBanned() {
+  const v = bannedInput.value.trim()
+  if (v && !banned.includes(v)) banned.push(v)
+  bannedInput.value = ""
+  renderBanned()
+}
+
+function renderForced() {
+  forcedList.innerHTML = ""
+  forced.forEach((c, i) => {
+    const li = document.createElement("li")
+    li.textContent = c
+    li.onclick = () => {
+      forced.splice(i, 1)
+      renderForced()
     }
-};
+    forcedList.appendChild(li)
+  })
+}
 
-function renderResult(teams) {
-    if (!teams || teams.length === 0) {
-        resultDiv.innerHTML = "<p>No result</p>";
-        return;
+function renderBanned() {
+  bannedList.innerHTML = ""
+  banned.forEach((c, i) => {
+    const li = document.createElement("li")
+    li.textContent = c
+    li.onclick = () => {
+      banned.splice(i, 1)
+      renderBanned()
     }
+    bannedList.appendChild(li)
+  })
+}
 
-    teams.forEach((t, idx) => {
-        const div = document.createElement("div");
-        div.className = "team";
+// ===== SOLVE =====
+function runSolver() {
+  fetch(`${API}/solve/${solver.value}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      max_team: +maxTeam.value,
+      time_limit: +timeLimit.value,
+      forced,
+      banned,
+      emblems
+    })
+  })
+    .then(r => r.json())
+    .then(showResult)
+}
 
-        div.innerHTML = `
-            <h3>#${idx + 1} | Score: ${t.score} | Cost: ${t.total_cost}</h3>
-            <div class="champions">
-                ${t.team.map(c => `
-                    <div class="champ">
-                        <strong>${c.name}</strong>
-                        <span>Cost: ${c.cost}</span>
-                        <span>${c.traits.join(", ")}</span>
-                    </div>
-                `).join("")}
-            </div>
-        `;
-
-        resultDiv.appendChild(div);
-    });
+// ===== RESULT =====
+function showResult(data) {
+  resultBody.innerHTML = ""
+  data.forEach(t => {
+    const tr = document.createElement("tr")
+    tr.innerHTML = `
+      <td>${t.team.join(", ")}</td>
+      <td>${t.score}</td>
+      <td>${t.team.length}</td>
+    `
+    resultBody.appendChild(tr)
+  })
 }
