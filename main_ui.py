@@ -1,26 +1,38 @@
 import sys
 import json
 from utils import resource_path
+
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit, QPushButton,
     QListWidget, QVBoxLayout, QHBoxLayout, QCompleter,
     QSpinBox, QGroupBox, QScrollArea,
-    QTableWidget, QTableWidgetItem
+    QTableWidget, QTableWidgetItem,
+    QComboBox
 )
 from PyQt5.QtCore import Qt
-from ryze import solve
 from PyQt5.QtWidgets import QHeaderView
+
+from ryze import solve as solve_ryze
+from bronze import solve as solve_bronze
+
+
 DEFAULT_BANNED_CHAMPIONS = [
     "Aatrox",
     "Aphelios",
     "Zoe",
     "Leona",
     "Diana",
+    "T-Hex",
+    "Yone",
+    "Baron Nashor",
+    "Zaahen",
+    "Brock",
+    "Galio",
     "Aurelion Sol"
 ]
+
 DEFAULT_FORCED_CHAMPIONS = [
-    "Ryze",
-    "Ahri"
+
 ]
 
 AUTO_IGNORE_TRAITS = {"Targon"}  # luôn ignore
@@ -39,16 +51,15 @@ class TFTTool(QWidget):
         self.load_default_forced()
         self.load_default_banned()
 
+    # ===== LOAD DEFAULT =====
     def load_default_banned(self):
         banned_list = self.list_banned["list"]
-
         for name in DEFAULT_BANNED_CHAMPIONS:
             if name in self.champion_names:
                 banned_list.addItem(name)
 
     def load_default_forced(self):
         forced_list = self.list_forced["list"]
-
         for name in DEFAULT_FORCED_CHAMPIONS:
             if name in self.champion_names:
                 forced_list.addItem(name)
@@ -67,22 +78,29 @@ class TFTTool(QWidget):
     def init_ui(self):
         main_layout = QHBoxLayout(self)
 
-        # ===== LEFT: FORCED / BANNED =====
+        # ===== LEFT =====
         left_layout = QHBoxLayout()
-
         self.list_forced = self.build_champion_box("Forced Champions")
         self.list_banned = self.build_champion_box("Banned Champions")
 
         left_layout.addLayout(self.list_forced["layout"])
         left_layout.addLayout(self.list_banned["layout"])
 
-        # ===== MIDDLE: SETTINGS + EMBLEM =====
+        # ===== MIDDLE =====
         middle_layout = QVBoxLayout()
 
-        # SETTINGS
         settings_box = QGroupBox("Solver Settings")
         settings_layout = QVBoxLayout()
 
+        # Solver selector
+        row0 = QHBoxLayout()
+        row0.addWidget(QLabel("Solver"))
+        self.solver_select = QComboBox()
+        self.solver_select.addItems(["Ryze", "Bronze"])
+        row0.addStretch()
+        row0.addWidget(self.solver_select)
+
+        # Max team size
         row1 = QHBoxLayout()
         row1.addWidget(QLabel("Max Team Size"))
         self.spin_max_size = QSpinBox()
@@ -91,6 +109,7 @@ class TFTTool(QWidget):
         row1.addStretch()
         row1.addWidget(self.spin_max_size)
 
+        # Time limit
         row2 = QHBoxLayout()
         row2.addWidget(QLabel("Time Limit (seconds)"))
         self.spin_time_limit = QSpinBox()
@@ -99,14 +118,14 @@ class TFTTool(QWidget):
         row2.addStretch()
         row2.addWidget(self.spin_time_limit)
 
+        settings_layout.addLayout(row0)
         settings_layout.addLayout(row1)
         settings_layout.addLayout(row2)
         settings_box.setLayout(settings_layout)
 
-        # EMBLEM EDITOR
+        # ===== EMBLEM =====
         emblem_box = QGroupBox("Emblem Editor")
         emblem_layout = QVBoxLayout()
-
         self.emblem_spinboxes = {}
 
         scroll = QScrollArea()
@@ -135,7 +154,7 @@ class TFTTool(QWidget):
         middle_layout.addWidget(settings_box)
         middle_layout.addWidget(emblem_box)
 
-        # ===== RIGHT: RESULT TABLE =====
+        # ===== RIGHT =====
         right_layout = QVBoxLayout()
 
         btn_run = QPushButton("Run Solver")
@@ -144,11 +163,11 @@ class TFTTool(QWidget):
         self.table = QTableWidget(0, 4)
         self.table.setHorizontalHeaderLabels([
             "Team",
-            "Traits",
+            "Score",
             "Team Size",
             "Time Limit"
         ])
-        # ---- CẤU HÌNH HIỂN THỊ BẢNG (QUAN TRỌNG) ----
+
         self.table.setWordWrap(True)
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
@@ -206,26 +225,25 @@ class TFTTool(QWidget):
     def get_items(self, list_widget):
         return [list_widget.item(i).text() for i in range(list_widget.count())]
 
-    # ===== MOCK RESULT =====
+    # ===== RUN SOLVER =====
     def run_solver_real(self):
         try:
-            # Xóa bảng cũ
             self.table.setRowCount(0)
 
-            # Lấy dữ liệu từ GUI
             forced = self.get_items(self.list_forced["list"])
             banned = self.get_items(self.list_banned["list"])
-            emblems = {t: spin.value() for t, spin in self.emblem_spinboxes.items() if spin.value() > 0}
+            emblems = {
+                t: spin.value()
+                for t, spin in self.emblem_spinboxes.items()
+                if spin.value() > 0
+            }
 
-            print("=== GUI INPUT ===")
-            print("Forced:", forced)
-            print("Banned:", banned)
-            print("Emblems:", emblems)
-            print("Max team size:", self.spin_max_size.value())
-            print("Time limit:", self.spin_time_limit.value())
+            solver_name = self.solver_select.currentText()
+            print("Using solver:", solver_name)
 
-            # Gọi solver
-            result = solve(
+            solver_func = solve_ryze if solver_name == "Ryze" else solve_bronze
+
+            result = solver_func(
                 max_team=self.spin_max_size.value(),
                 time_limit=self.spin_time_limit.value(),
                 forced=forced,
@@ -233,14 +251,9 @@ class TFTTool(QWidget):
                 emblems=emblems
             )
 
-            print("=== SOLVER RESULT ===")
-            for idx, team_info in enumerate(result):
-                # Kiểm tra team_info có key 'team' không
+            for team_info in result:
                 team = team_info.get("team", [])
-                # Lọc các object hợp lệ có attribute name
                 team_names = [c.name for c in team if hasattr(c, "name")]
-
-                print(f"Team {idx + 1}: {team_names}, score: {team_info.get('score', 0)}")
 
                 row = self.table.rowCount()
                 self.table.insertRow(row)
@@ -249,11 +262,8 @@ class TFTTool(QWidget):
                 self.table.setItem(row, 2, QTableWidgetItem(str(len(team_names))))
                 self.table.setItem(row, 3, QTableWidgetItem(f"{self.spin_time_limit.value()}s"))
 
-            if not result:
-                print("Solver returned empty result!")
-
         except Exception as e:
-            print("ERROR in run_solver_real:", e)
+            print("ERROR:", e)
 
 
 if __name__ == "__main__":
