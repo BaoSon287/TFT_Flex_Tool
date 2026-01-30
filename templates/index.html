@@ -511,7 +511,7 @@
                 </div>
 
                 <div class="setting-row">
-                    <label>Kích Thước Đội:</label>
+                    <label>Kích Thước Đội Hình:</label>
                     <input type="number" id="maxTeam" value="8" min="1" max="12">
                 </div>
 
@@ -555,22 +555,33 @@
         // ===== INITIALIZATION =====
         async function init() {
             try {
-                const [champRes, traitRes] = await Promise.all([
+                const [champRes, traitRes, defaultRes] = await Promise.all([
                     fetch("/api/champions"),
-                    fetch("/api/traits")
+                    fetch("/api/traits"),
+                    fetch("/api/defaults")
                 ]);
 
                 const champData = await champRes.json();
                 const traitData = await traitRes.json();
+                const defaultData = await defaultRes.json();
 
                 if (champData.success) {
                     allChampions = champData.data;
+                    if (champData.default_banned) {
+                        bannedChampions = [...champData.default_banned];
+                        renderChampionList("bannedList", bannedChampions);
+                    }
                     setupAutocomplete();
                 }
 
                 if (traitData.success) {
                     allTraits = traitData.data;
                     buildEmblemGrid();
+                }
+
+                if (defaultData.banned) {
+                    bannedChampions = [...defaultData.banned];
+                    renderChampionList("bannedList", bannedChampions);
                 }
             } catch (error) {
                 showError("Không thể tải dữ liệu: " + error.message);
@@ -609,10 +620,13 @@
 
                 const matches = allChampions
                     .map(c => c.name)
-                    .filter(name =>
-                        name.toLowerCase().includes(value) &&
-                        !list.includes(name)
-                    )
+                    .filter(name => {
+                        const firstChar = name[0].toLowerCase();
+                        return (
+                            firstChar === value[0] &&   // 🔥 chỉ so chữ đầu
+                            !list.includes(name)
+                        );
+                })
                     .slice(0, 8);
 
                 if (!matches.length) {
