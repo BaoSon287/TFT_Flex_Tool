@@ -212,12 +212,22 @@ def solve():
 
         formatted = []
         for item in result:
+            from collections import Counter
+
+            traits_counter = Counter()
+
+            for champ in item["team"]:
+                for t in champ.traits:
+                    traits_counter[t] += 1
+
             formatted.append({
                 "score": item["score"],
                 "cost": item["cost"],
                 "team": [c.name for c in item["team"]],
-                "team_size": len(item["team"])
+                "team_size": len(item["team"]),
+                "traits": dict(traits_counter)  # 👈 QUAN TRỌNG
             })
+
 
         return jsonify({"success": True, "data": formatted})
 

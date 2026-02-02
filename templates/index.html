@@ -468,7 +468,13 @@
             cursor: pointer;
             color: #00d4ff;
             font-weight: bold;
+            font-size: 26px;        
+            user-select: none;
+            display: inline-block;
+            width: 26px;
+            text-align: center;
         }
+
 
         .trait-panel {
             margin-top: 6px;
@@ -604,6 +610,7 @@
 
     <script>
         let allChampions = [];
+        let championSearchSource = [];
         let allTraits = {};
         let forcedChampions = [];
         let bannedChampions = [];
@@ -623,6 +630,7 @@
 
                 if (champData.success) {
                     allChampions = champData.data;
+                    championSearchSource = [...allChampions];
                     if (champData.default_banned) {
                         bannedChampions = [...champData.default_banned];
                         renderChampionList("bannedList", bannedChampions);
@@ -685,15 +693,13 @@
                     return;
                 }
 
-                const matches = allChampions
-                    .filter(champ => {
-                        const firstChar = champ.name[0].toLowerCase();
-                        return (
-                            firstChar === value[0] &&
-                            !list.includes(champ.name)
-                        );
-                    })
+                const matches = championSearchSource
+                    .filter(champ =>
+                        champ.name.toLowerCase().startsWith(value.toLowerCase())
+                    )
                     .slice(0, 8);
+
+
 
                 if (!matches.length) {
                     box.style.display = "none";
@@ -701,17 +707,31 @@
                 }
 
                 matches.forEach(champ => {
-                    const div = document.createElement("div");
-                    div.className = "autocomplete-item";
-                    
-                    const imgSrc = champ.image;
-                    const imgHtml = imgSrc 
-                        ? `<img src="${imgSrc}" onerror="this.style.display='none'" alt="${champ.name}">`
-                        : `<span class="img-placeholder">👤</span>`;
-                    
-                    div.innerHTML = `${imgHtml}<span>${champ.name}</span>`;
+                    const isBanned = bannedChampions.includes(champ.name);
+
+                const div = document.createElement("div");
+                div.className = "autocomplete-item";
+                if (isBanned) div.style.opacity = "0.5";
+
+                const imgSrc = champ.image;
+                const imgHtml = imgSrc 
+                    ? `<img src="${imgSrc}" onerror="this.style.display='none'" alt="${champ.name}">`
+                    : `<span class="img-placeholder">👤</span>`;
+
+                div.innerHTML = `
+                    ${imgHtml}
+                    <span>
+                        ${champ.name}
+                        ${isBanned ? '<em style="color:#ff6666; margin-left:6px">(đã bị ban)</em>' : ''}
+                    </span>
+                `;
+
                     
                     div.onclick = () => {
+                        if (isBanned) {
+                            showError("⚠️ Tướng này đã được ban, hãy gỡ khỏi Ban trước");
+                            return;
+                        }
                         input.value = champ.name;
                         addFn();
                         box.style.display = "none";
@@ -748,25 +768,32 @@
 
         function addChampion(inputId, listId, list) {
             const input = document.getElementById(inputId);
-            const name = input.value.trim();
+            const rawName = input.value.trim();
+            if (!rawName) return;
 
-            if (!name) return;
+            // 🔑 tìm champion chuẩn theo tên (case-insensitive)
+            const champ = allChampions.find(
+                c => c.name.toLowerCase() === rawName.toLowerCase()
+            );
 
-            const exists = allChampions.some(c => c.name.toLowerCase() === name.toLowerCase());
-            if (!exists) {
+            if (!champ) {
                 showError("Champion không tồn tại!");
                 return;
             }
 
-            if (list.includes(name)) {
+            const canonicalName = champ.name; // VD: "Aatrox"
+
+            if (list.includes(canonicalName)) {
                 showError("Champion đã được thêm!");
                 return;
             }
 
-            list.push(name);
+            // ✅ luôn push tên chuẩn
+            list.push(canonicalName);
             input.value = "";
             renderChampionList(listId, list);
         }
+
 
         function removeChampion(list, name) {
             const idx = list.indexOf(name);
@@ -856,7 +883,9 @@
 
         function calculateTraits(team) {
             const counts = {};
+            const SPECIAL_TRAITS = ["Darkin", "Targon"];
 
+            // 1️⃣ Đếm trait từ champion
             team.forEach(name => {
                 const champ = allChampions.find(c => c.name === name);
                 if (!champ || !Array.isArray(champ.traits)) return;
@@ -866,6 +895,7 @@
                 });
             });
 
+            // 2️⃣ Cộng từ emblem
             document.querySelectorAll(".emblem-input").forEach(input => {
                 const value = parseInt(input.value) || 0;
                 if (value > 0) {
@@ -874,36 +904,53 @@
                 }
             });
 
+            // 3️⃣ Xác định hệ hiển thị
             const active = [];
 
             for (const trait in counts) {
+                const count = counts[trait];
                 const traitObj = allTraits[trait];
-                if (!traitObj) continue;
 
-                let thresholds = traitObj.thresholds;
-
-                if (!Array.isArray(thresholds)) {
-                    if (typeof thresholds === "object") {
-                        thresholds = Object.values(thresholds);
-                    } else if (typeof thresholds === "number") {
-                        thresholds = [thresholds];
-                    } else {
-                        continue;
-                    }
-                }
-
-                const min = Math.min(...thresholds);
-                if (counts[trait] >= min) {
+                // 🔥 Darkin / Targon → có là hiện
+                if (SPECIAL_TRAITS.includes(trait)) {
                     active.push({
                         name: trait,
-                        count: counts[trait],
-                        image: traitObj.image
+                        count,
+                        image: traitObj?.image || `/static/images/emblems/${trait}.png`
                     });
+                    continue;
+                }
+
+                // 🟡 Trait không có trong traits.json
+                if (!traitObj) {
+                    if (count >= 2) {
+                        active.push({
+                            name: trait,
+                            count,
+                            image: `/static/images/emblems/${trait}.png`
+                        });
+                    }
+                    continue;
+                }
+
+                // 🟢 Trait thường → phải đạt mốc
+                if (Array.isArray(traitObj.thresholds)) {
+                    const need = Math.min(...traitObj.thresholds);
+                    if (count >= need) {
+                        active.push({
+                            name: trait,
+                            count,
+                            image: traitObj.image
+                        });
+                    }
                 }
             }
 
             return active;
         }
+
+
+
 
         // ===== DISPLAY RESULTS =====
         function displayResults(results) {
@@ -949,9 +996,14 @@
                                                 `;
                                             }).join("")}
 
-                                            <span class="trait-toggle" onclick="toggleTraits(${idx})">
-                                                🧬
+                                            <span
+                                                id="trait-arrow-${idx}"
+                                                class="trait-toggle"
+                                                onclick="toggleTraits(${idx})"
+                                            >
+                                                ▸
                                             </span>
+
                                         </div>
                                         <div class="trait-panel" id="trait-${idx}">
                                             ${
@@ -981,9 +1033,14 @@
 
         function toggleTraits(idx) {
             const panel = document.getElementById(`trait-${idx}`);
-            panel.style.display =
-                panel.style.display === "block" ? "none" : "block";
+            const arrow = document.getElementById(`trait-arrow-${idx}`);
+
+            const isOpen = window.getComputedStyle(panel).display === "block";
+
+            panel.style.display = isOpen ? "none" : "block";
+            arrow.textContent = isOpen ? "▸" : "▾";
         }
+
 
         // ===== ERROR HANDLING =====
         function showError(msg) {
