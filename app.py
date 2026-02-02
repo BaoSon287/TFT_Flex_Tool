@@ -1,3 +1,7 @@
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import json
@@ -37,33 +41,30 @@ def load_champions_data(banned=None):
     if banned is None:
         banned = []
 
+    path = os.path.join(DATA_DIR, "champions.json")
+    with open(path, encoding="utf-8") as f:
+        raw = json.load(f)
+
     banned_lc = {b.lower() for b in banned}
+    return [
+        {
+            "name": c["name"],
+            "cost": c["cost"],
+            "traits": c["traits"],
+            "roles": c.get("roles", []),
+            "locked": c.get("locked", False)
+        }
+        for c in raw
+        if c["name"].lower() not in banned_lc
+    ]
 
-    try:
-        with open("data/champions.json", encoding="utf-8") as f:
-            raw = json.load(f)
-    except FileNotFoundError:
-        return []
-
-    res = []
-    for c in raw:
-        if c["name"].lower() not in banned_lc:
-            res.append({
-                "name": c["name"],
-                "cost": c["cost"],
-                "traits": c["traits"],
-                "roles": c.get("roles", []),
-                "locked": c.get("locked", False)
-            })
-    return res
 
 
 def load_traits_data():
-    try:
-        with open("data/traits.json", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {}
+    path = os.path.join(DATA_DIR, "traits.json")
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
 
 # ===== ROUTES =====
 @app.route("/")
@@ -88,13 +89,52 @@ def get_champions():
 
 
 
+VALID_EMBLEMS = {
+    "Bilgewater",
+    "Chinh Phạt",
+    "Cảnh Vệ",
+    "Cực Tốc",
+    "Demacia",
+    "Dũng Sĩ",
+    "Freljord",
+    "Hư Không",
+    "Ionia",
+    "Ixtal",
+    "Nhiễu Loạn",
+    "Noxus",
+    "Pháp Sư",
+    "Piltover",
+    "Thuật Sĩ",
+    "Viễn Kích",
+    "Vệ Quân",
+    "Yordle",
+    "Zaun",
+    "Đấu Sĩ",
+    "Đồ Tể"
+}
+
 @app.route("/api/traits", methods=["GET"])
 def get_traits():
     try:
         traits = load_traits_data()
-        return jsonify({"success": True, "data": traits})
+
+        # 🔥 CHỈ GIỮ CÁC ẤN HỢP LỆ
+        filtered = {
+            k: v
+            for k, v in traits.items()
+            if k in VALID_EMBLEMS
+        }
+
+        return jsonify({
+            "success": True,
+            "data": filtered
+        })
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
 
 
 @app.route("/api/solve", methods=["POST"])
