@@ -146,6 +146,13 @@
             box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
 
+        .champion-tag img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
         .champion-tag .remove {
             cursor: pointer;
             font-weight: bold;
@@ -208,10 +215,19 @@
             border-radius: 6px;
         }
 
+        .emblem-item img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
         .emblem-item label {
             flex: 1;
             font-size: 0.9em;
             color: #b0b0b0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .emblem-item input[type="number"] {
@@ -265,6 +281,9 @@
         }
 
         .champ-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             padding: 4px 10px;
             background: rgba(0, 212, 255, 0.2);
             border: 1px solid #00d4ff;
@@ -272,6 +291,14 @@
             font-size: 0.85em;
             color: #00d4ff;
         }
+
+        .champ-badge img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
         /* 🔥 FORCED CHAMPION */
         .champ-badge.forced {
             background: linear-gradient(135deg, #ff9800, #ff5722);
@@ -280,7 +307,6 @@
             font-weight: 700;
             box-shadow: 0 0 8px rgba(255, 152, 0, 0.7);
         }
-
 
         .score-badge {
             padding: 4px 10px;
@@ -399,6 +425,7 @@
             padding: 30px;
             color: #808080;
         }
+
         /* ===== AUTOCOMPLETE DROPDOWN ===== */
         .autocomplete-box {
             position: absolute;
@@ -418,12 +445,23 @@
         .autocomplete-item {
             padding: 8px 12px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .autocomplete-item img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         .autocomplete-item:hover {
             background: rgba(0, 212, 255, 0.2);
             color: #00d4ff;
         }
+
         /* ===== TRAIT DISPLAY ===== */
         .trait-toggle {
             margin-left: 10px;
@@ -443,7 +481,9 @@
         }
 
         .trait-badge {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             margin: 2px 6px 2px 0;
             padding: 3px 8px;
             background: rgba(0, 212, 255, 0.15);
@@ -452,7 +492,23 @@
             color: #00d4ff;
         }
 
+        .trait-badge img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
 
+        /* Image fallback placeholder */
+        .img-placeholder {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 50%;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -588,7 +644,18 @@
             }
         }
 
-        // ===== AUTOCOMPLETE =====
+        // ===== HELPER: Get Champion Image =====
+        function getChampionImage(name) {
+            const champ = allChampions.find(c => c.name === name);
+            return champ && champ.image ? champ.image : null;
+        }
+
+        // ===== HELPER: Get Trait Image =====
+        function getTraitImage(traitName) {
+            const trait = allTraits[traitName];
+            return trait && trait.image ? trait.image : null;
+        }
+
         // ===== AUTOCOMPLETE =====
         function setupAutocomplete() {
             bindAutocomplete(
@@ -619,14 +686,13 @@
                 }
 
                 const matches = allChampions
-                    .map(c => c.name)
-                    .filter(name => {
-                        const firstChar = name[0].toLowerCase();
+                    .filter(champ => {
+                        const firstChar = champ.name[0].toLowerCase();
                         return (
-                            firstChar === value[0] &&   // 🔥 chỉ so chữ đầu
-                            !list.includes(name)
+                            firstChar === value[0] &&
+                            !list.includes(champ.name)
                         );
-                })
+                    })
                     .slice(0, 8);
 
                 if (!matches.length) {
@@ -634,12 +700,19 @@
                     return;
                 }
 
-                matches.forEach(name => {
+                matches.forEach(champ => {
                     const div = document.createElement("div");
                     div.className = "autocomplete-item";
-                    div.textContent = name;
+                    
+                    const imgSrc = champ.image;
+                    const imgHtml = imgSrc 
+                        ? `<img src="${imgSrc}" onerror="this.style.display='none'" alt="${champ.name}">`
+                        : `<span class="img-placeholder">👤</span>`;
+                    
+                    div.innerHTML = `${imgHtml}<span>${champ.name}</span>`;
+                    
                     div.onclick = () => {
-                        input.value = name;
+                        input.value = champ.name;
                         addFn();
                         box.style.display = "none";
                     };
@@ -663,7 +736,6 @@
                 }
             });
         }
-
 
         // ===== ADD CHAMPIONS =====
         function addForcedChampion() {
@@ -705,23 +777,41 @@
 
         function renderChampionList(listId, list) {
             const container = document.getElementById(listId);
-            container.innerHTML = list.map(name => `
-                <div class="champion-tag">
-                    ${name}
-                    <span class="remove" onclick="removeChampion(${list === forcedChampions ? 'forcedChampions' : 'bannedChampions'}, '${name}')">×</span>
-                </div>
-            `).join("");
+            container.innerHTML = list.map(name => {
+                const imgSrc = getChampionImage(name);
+                const imgHtml = imgSrc 
+                    ? `<img src="${imgSrc}" onerror="this.style.display='none'" alt="${name}">`
+                    : `<span class="img-placeholder">👤</span>`;
+                
+                return `
+                    <div class="champion-tag">
+                        ${imgHtml}
+                        ${name}
+                        <span class="remove" onclick="removeChampion(${list === forcedChampions ? 'forcedChampions' : 'bannedChampions'}, '${name}')">×</span>
+                    </div>
+                `;
+            }).join("");
         }
 
         // ===== EMBLEMS =====
         function buildEmblemGrid() {
             const grid = document.getElementById("emblemGrid");
-            grid.innerHTML = Object.keys(allTraits).map(trait => `
-                <div class="emblem-item">
-                    <label>${trait}</label>
-                    <input type="number" class="emblem-input" data-trait="${trait}" value="0" min="0" max="5">
-                </div>
-            `).join("");
+            grid.innerHTML = Object.entries(allTraits).map(([trait, data]) => {
+                const imgSrc = data.image;
+                const imgHtml = imgSrc 
+                    ? `<img src="${imgSrc}" onerror="this.style.display='none'" alt="${trait}">`
+                    : `<span>⚡</span>`;
+                
+                return `
+                    <div class="emblem-item">
+                        <label>
+                            ${imgHtml}
+                            ${trait}
+                        </label>
+                        <input type="number" class="emblem-input" data-trait="${trait}" value="0" min="0" max="5">
+                    </div>
+                `;
+            }).join("");
         }
 
         // ===== RUN SOLVER =====
@@ -763,10 +853,10 @@
                 document.getElementById("loading").style.display = "none";
             }
         }
+
         function calculateTraits(team) {
             const counts = {};
 
-            // đếm trait từ champion
             team.forEach(name => {
                 const champ = allChampions.find(c => c.name === name);
                 if (!champ || !Array.isArray(champ.traits)) return;
@@ -776,7 +866,6 @@
                 });
             });
 
-            // cộng emblem
             document.querySelectorAll(".emblem-input").forEach(input => {
                 const value = parseInt(input.value) || 0;
                 if (value > 0) {
@@ -791,7 +880,6 @@
                 const traitObj = allTraits[trait];
                 if (!traitObj) continue;
 
-                // 🔐 đảm bảo thresholds luôn là array
                 let thresholds = traitObj.thresholds;
 
                 if (!Array.isArray(thresholds)) {
@@ -806,13 +894,16 @@
 
                 const min = Math.min(...thresholds);
                 if (counts[trait] >= min) {
-                    active.push(`${counts[trait]} ${trait}`);
+                    active.push({
+                        name: trait,
+                        count: counts[trait],
+                        image: traitObj.image
+                    });
                 }
             }
 
             return active;
         }
-
 
         // ===== DISPLAY RESULTS =====
         function displayResults(results) {
@@ -844,9 +935,15 @@
                                                 const isForced = forcedChampions
                                                     .map(c => c.toLowerCase())
                                                     .includes(name.toLowerCase());
+                                                
+                                                const imgSrc = getChampionImage(name);
+                                                const imgHtml = imgSrc 
+                                                    ? `<img src="${imgSrc}" onerror="this.style.display='none'" alt="${name}">`
+                                                    : `<span class="img-placeholder">👤</span>`;
 
                                                 return `
                                                     <span class="champ-badge ${isForced ? "forced" : ""}">
+                                                        ${imgHtml}
                                                         ${name}
                                                     </span>
                                                 `;
@@ -859,9 +956,12 @@
                                         <div class="trait-panel" id="trait-${idx}">
                                             ${
                                                 traits.length
-                                                    ? traits.map(t =>
-                                                        `<span class="trait-badge">${t}</span>`
-                                                    ).join("")
+                                                    ? traits.map(t => {
+                                                        const imgHtml = t.image 
+                                                            ? `<img src="${t.image}" onerror="this.style.display='none'" alt="${t.name}">`
+                                                            : `<span>⚡</span>`;
+                                                        return `<span class="trait-badge">${imgHtml}${t.count} ${t.name}</span>`;
+                                                    }).join("")
                                                     : "<em>Không kích hệ nào</em>"
                                             }
                                         </div>
@@ -872,13 +972,13 @@
                                 </tr>
                             `;
                         }).join("")}
-
                     </tbody>
                 </table>
             `;
 
             container.innerHTML = tableHtml;
         }
+
         function toggleTraits(idx) {
             const panel = document.getElementById(`trait-${idx}`);
             panel.style.display =
