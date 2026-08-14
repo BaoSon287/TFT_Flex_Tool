@@ -159,7 +159,7 @@ def solve(max_team, time_limit, forced, banned, emblems, lux_trait=None):
     def valid_team(team):
         if not team:
             return False
-        if not any(c.roles for c in champions):
+        if not any(c.roles for c in team):
             return True
         tank, carry = count_roles(team)
         return tank >= MIN_TANK and carry >= MIN_CARRY
