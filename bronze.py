@@ -78,7 +78,7 @@ def upper_bound(trait_counts, traits, remain):
 
 
 # ===== SOLVER =====
-def solve(max_team, forced, banned, emblems, min_tank=DEFAULT_MIN_TANK, min_carry=DEFAULT_MIN_CARRY, lux_trait=None, time_limit=None):
+def solve(max_team, forced, banned, emblems, min_tank=DEFAULT_MIN_TANK, min_carry=DEFAULT_MIN_CARRY, lux_trait=None, khazix_traits=None):
     traits = load_traits()
     champions = load_champions(banned)
 
@@ -105,6 +105,25 @@ def solve(max_team, forced, banned, emblems, min_tank=DEFAULT_MIN_TANK, min_carr
         if lux_champ is not None and champ is lux_champ and lux_selected_trait and t == lux_selected_trait:
             return 2
         return 1
+
+    # ===== KHAZIX ADDITIONAL TRAITS =====
+    # Khazix có trait mặc định "Khắc Tinh", có thể thêm các hệ khác
+    VALID_KHAZIX_TRAITS = {"Tàn Phá", "Thuật Sư", "Đao Phủ", "Liên Kích"}
+    khazix_champ = None
+    khazix_added_traits = []
+    
+    if khazix_traits is None:
+        khazix_traits = []
+    
+    for c in champions:
+        if c.name == "Khazix":
+            khazix_champ = c
+            # Validate and add selected traits
+            for trait in khazix_traits:
+                if trait in VALID_KHAZIX_TRAITS:
+                    khazix_added_traits.append(trait)
+                    c.traits.append(trait)
+            break
 
     champions.sort(
         key=lambda c: champion_value(c, traits),
@@ -185,10 +204,6 @@ def solve(max_team, forced, banned, emblems, min_tank=DEFAULT_MIN_TANK, min_carr
 
     # ===== DFS =====
     def dfs(i, active_cnt):
-        # Check time limit only if specified
-        if time_limit is not None and time.time() - start > time_limit:
-            return
-
         remain_slot = max_team - len(team)
         best_score = best[0]["score"] if best else 0
 

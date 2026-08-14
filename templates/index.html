@@ -151,6 +151,7 @@
             height: 24px;
             border-radius: 50%;
             object-fit: cover;
+            object-position: right;
         }
 
         .champion-tag .remove {
@@ -297,6 +298,7 @@
             height: 20px;
             border-radius: 50%;
             object-fit: cover;
+            object-position: right;
         }
 
         /* 🔥 FORCED CHAMPION */
@@ -455,6 +457,7 @@
             height: 24px;
             border-radius: 50%;
             object-fit: cover;
+            object-position: right;
         }
 
         .autocomplete-item:hover {
@@ -570,11 +573,6 @@
                 </div>
 
                 <div class="setting-row">
-                    <label>Thời Gian (giây):</label>
-                    <input type="number" id="timeLimit" value="20" min="1" max="60">
-                </div>
-
-                <div class="setting-row">
                     <label>Lux Aspect:</label>
                     <select id="luxTraitSelect">
                         <option value="">Không chọn</option>
@@ -588,6 +586,28 @@
                         <option value="Tiên Hắc Ám">Tiên Hắc Ám</option>
                         <option value="Tiên Linh">Tiên Linh</option>
                     </select>
+                </div>
+
+                <div class="setting-row">
+                    <label>Khazix Traits:</label>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                            <input type="checkbox" id="khazixTanPha" value="Tàn Phá">
+                            Tàn Phá
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                            <input type="checkbox" id="khazixThuatSu" value="Thuật Sư">
+                            Thuật Sư
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                            <input type="checkbox" id="khazixDaoPhụ" value="Đao Phủ">
+                            Đao Phủ
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                            <input type="checkbox" id="khazixLienKich" value="Liên Kích">
+                            Liên Kích
+                        </label>
+                    </div>
                 </div>
 
                 <button class="run-button" onclick="runSolver()" id="runBtn">
@@ -861,17 +881,23 @@
                     emblems[input.dataset.trait] = parseInt(input.value) || 0;
                 });
 
+                const khazixTraits = [];
+                if (document.getElementById("khazixTanPha").checked) khazixTraits.push("Tàn Phá");
+                if (document.getElementById("khazixThuatSu").checked) khazixTraits.push("Thuật Sư");
+                if (document.getElementById("khazixDaoPhụ").checked) khazixTraits.push("Đao Phủ");
+                if (document.getElementById("khazixLienKich").checked) khazixTraits.push("Liên Kích");
+
                 const response = await fetch("/api/solve", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         solver: "bronze",
                         max_team: parseInt(document.getElementById("maxTeam").value),
-                        time_limit: parseInt(document.getElementById("timeLimit").value),
                         forced: forcedChampions,
                         banned: bannedChampions,
                         emblems: emblems,
-                        lux_trait: document.getElementById("luxTraitSelect").value || null
+                        lux_trait: document.getElementById("luxTraitSelect").value || null,
+                        khazix_traits: khazixTraits
                     })
                 });
 

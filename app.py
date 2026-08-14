@@ -133,7 +133,6 @@ def solve():
 
         solver_type = data.get("solver", "ryze").lower()
         max_team = data.get("max_team", 8)
-        time_limit = data.get("time_limit", 20)
 
         forced = set(data.get("forced", []))
 
@@ -170,13 +169,19 @@ def solve():
         ]:
             lux_trait = None
 
+        # Handle Khazix additional traits
+        khazix_traits = data.get("khazix_traits", [])
+        if khazix_traits:
+            # Khazix will get additional traits from these options
+            pass  # Will be handled in bronze.py
+
         result = solve_bronze(
             max_team=max_team,
-            time_limit=time_limit,
             forced=list(forced),
             banned=list(banned),
             emblems=emblems,
-            lux_trait=lux_trait
+            lux_trait=lux_trait,
+            khazix_traits=khazix_traits
         )
 
         formatted = []
