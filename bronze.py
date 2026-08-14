@@ -6,8 +6,9 @@ from utils import resource_path
 IGNORED_TRAIT = "Targon"
 TOP_K = 5
 
-MIN_TANK = 2
-MIN_CARRY = 2
+# Default values (có thể override)
+DEFAULT_MIN_TANK = 2
+DEFAULT_MIN_CARRY = 2
 MIN_COST = 4
 
 def normalize_name_map(champions):
@@ -77,24 +78,31 @@ def upper_bound(trait_counts, traits, remain):
 
 
 # ===== SOLVER =====
-def solve(max_team, time_limit, forced, banned, emblems, lux_trait=None):
+def solve(max_team, forced, banned, emblems, min_tank=DEFAULT_MIN_TANK, min_carry=DEFAULT_MIN_CARRY, lux_trait=None, time_limit=None):
     traits = load_traits()
     champions = load_champions(banned)
 
     # ===== LUX ASPECT =====
-    # Lux (Thế Thần) có thể chọn 1 trong 9 hệ
-    # Khi chọn hệ, Lux được tính 2 mốc tộc/hệ đó
+    # Lux (Thế Thần) có thể chọn 1 trong 9 hệ hoặc dùng Thế Thần mặc định
+    # Khi chọn hệ, Lux được tính 2 mốc cho hệ đó
+    VALID_LUX_TRAITS = {"Gai Đen", "Hoa Linh", "Hỏa Ngục", "Mặt Trăng", 
+                       "Mặt Trời", "Nguyên Sinh", "Thần Rừng", "Tiên Hắc Ám", "Tiên Linh"}
+    
     lux_champ = None
-    if lux_trait:
-        for c in champions:
-            if c.name == "Lux":
+    lux_selected_trait = None
+    for c in champions:
+        if c.name == "Lux":
+            lux_champ = c
+            # Nếu chỉ định lux_trait, thay đổi trait của Lux
+            if lux_trait and lux_trait in VALID_LUX_TRAITS:
                 c.traits = [lux_trait]
-                lux_champ = c
-                break
+                lux_selected_trait = lux_trait
+            # Nếu không chỉ định, Lux dùng trait "Thế Thần" mặc định
+            break
 
     def trait_count_for(champ, t):
-        """Lux đếm 2 mốc cho trait đã chọn, các tướng khác đếm 1"""
-        if lux_champ is not None and champ is lux_champ and t == lux_trait:
+        """Lux đếm 2 mốc cho trait được chọn, các tướng khác đếm 1"""
+        if lux_champ is not None and champ is lux_champ and lux_selected_trait and t == lux_selected_trait:
             return 2
         return 1
 
@@ -159,10 +167,11 @@ def solve(max_team, time_limit, forced, banned, emblems, lux_trait=None):
     def valid_team(team):
         if not team:
             return False
+        # Nếu tất cả tướng trong team không có role thì skip kiểm tra
         if not any(c.roles for c in team):
             return True
         tank, carry = count_roles(team)
-        return tank >= MIN_TANK and carry >= MIN_CARRY
+        return tank >= min_tank and carry >= min_carry
 
     # ===== SAVE RESULT =====
     def save(team, score):
@@ -176,7 +185,8 @@ def solve(max_team, time_limit, forced, banned, emblems, lux_trait=None):
 
     # ===== DFS =====
     def dfs(i, active_cnt):
-        if time.time() - start > time_limit:
+        # Check time limit only if specified
+        if time_limit is not None and time.time() - start > time_limit:
             return
 
         remain_slot = max_team - len(team)
@@ -189,7 +199,7 @@ def solve(max_team, time_limit, forced, banned, emblems, lux_trait=None):
         # --- role bound ---
         if any(c.roles for c in champions):
             tank, carry = count_roles(team)
-            if tank + remain_slot < MIN_TANK or carry + remain_slot < MIN_CARRY:
+            if tank + remain_slot < min_tank or carry + remain_slot < min_carry:
                 return
 
         # --- save only valid team ---
