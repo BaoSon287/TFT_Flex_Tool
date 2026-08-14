@@ -565,14 +565,6 @@
                 <div class="panel-title">⚙️ Cài Đặt</div>
                 
                 <div class="setting-row">
-                    <label>Giải Pháp:</label>
-                    <select id="solverSelect">
-                        <option value="ryze">Ryze</option>
-                        <option value="bronze">Bronze</option>
-                    </select>
-                </div>
-
-                <div class="setting-row">
                     <label>Kích Thước Đội Hình:</label>
                     <input type="number" id="maxTeam" value="8" min="1" max="12">
                 </div>
@@ -580,6 +572,22 @@
                 <div class="setting-row">
                     <label>Thời Gian (giây):</label>
                     <input type="number" id="timeLimit" value="20" min="1" max="60">
+                </div>
+
+                <div class="setting-row">
+                    <label>Lux Aspect:</label>
+                    <select id="luxTraitSelect">
+                        <option value="">Không chọn</option>
+                        <option value="Gai Đen">Gai Đen</option>
+                        <option value="Hoa Linh">Hoa Linh</option>
+                        <option value="Hỏa Ngục">Hỏa Ngục</option>
+                        <option value="Mặt Trăng">Mặt Trăng</option>
+                        <option value="Mặt Trời">Mặt Trời</option>
+                        <option value="Nguyên Sinh">Nguyên Sinh</option>
+                        <option value="Thần Rừng">Thần Rừng</option>
+                        <option value="Tiên Hắc Ám">Tiên Hắc Ám</option>
+                        <option value="Tiên Linh">Tiên Linh</option>
+                    </select>
                 </div>
 
                 <button class="run-button" onclick="runSolver()" id="runBtn">
@@ -857,12 +865,13 @@
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        solver: document.getElementById("solverSelect").value,
+                        solver: "bronze",
                         max_team: parseInt(document.getElementById("maxTeam").value),
                         time_limit: parseInt(document.getElementById("timeLimit").value),
                         forced: forcedChampions,
                         banned: bannedChampions,
-                        emblems: emblems
+                        emblems: emblems,
+                        lux_trait: document.getElementById("luxTraitSelect").value || null
                     })
                 });
 

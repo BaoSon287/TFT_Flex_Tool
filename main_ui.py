@@ -12,7 +12,6 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHeaderView
 
-from ryze import solve as solve_ryze
 from bronze import solve as solve_bronze
 
 
@@ -92,14 +91,6 @@ class TFTTool(QWidget):
         settings_box = QGroupBox("Solver Settings")
         settings_layout = QVBoxLayout()
 
-        # Solver selector
-        row0 = QHBoxLayout()
-        row0.addWidget(QLabel("Solver"))
-        self.solver_select = QComboBox()
-        self.solver_select.addItems(["Ryze", "Bronze"])
-        row0.addStretch()
-        row0.addWidget(self.solver_select)
-
         # Max team size
         row1 = QHBoxLayout()
         row1.addWidget(QLabel("Max Team Size"))
@@ -118,9 +109,21 @@ class TFTTool(QWidget):
         row2.addStretch()
         row2.addWidget(self.spin_time_limit)
 
-        settings_layout.addLayout(row0)
+        # Lux Aspect (Thế Thần)
+        row3 = QHBoxLayout()
+        row3.addWidget(QLabel("Lux Aspect"))
+        self.lux_trait_select = QComboBox()
+        self.lux_trait_select.addItem("Không chọn")
+        self.lux_trait_select.addItems([
+            "Gai Đen", "Hoa Linh", "Hỏa Ngục", "Mặt Trăng",
+            "Mặt Trời", "Nguyên Sinh", "Thần Rừng", "Tiên Hắc Ám", "Tiên Linh"
+        ])
+        row3.addStretch()
+        row3.addWidget(self.lux_trait_select)
+
         settings_layout.addLayout(row1)
         settings_layout.addLayout(row2)
+        settings_layout.addLayout(row3)
         settings_box.setLayout(settings_layout)
 
         # ===== EMBLEM =====
@@ -238,17 +241,19 @@ class TFTTool(QWidget):
                 if spin.value() > 0
             }
 
-            solver_name = self.solver_select.currentText()
-            print("Using solver:", solver_name)
+            print("Using solver: Bronze")
 
-            solver_func = solve_ryze if solver_name == "Ryze" else solve_bronze
+            lux_trait = self.lux_trait_select.currentText()
+            if lux_trait == "Không chọn":
+                lux_trait = None
 
-            result = solver_func(
+            result = solve_bronze(
                 max_team=self.spin_max_size.value(),
                 time_limit=self.spin_time_limit.value(),
                 forced=forced,
                 banned=banned,
-                emblems=emblems
+                emblems=emblems,
+                lux_trait=lux_trait
             )
 
             for team_info in result:

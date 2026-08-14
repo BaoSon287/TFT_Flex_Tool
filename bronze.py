@@ -57,7 +57,11 @@ def load_traits(path=None):
 
 # ===== HEURISTICS =====
 def champion_value(champ, traits):
-    return sum(1 / min(traits[t].thresholds) for t in champ.traits)
+    return sum(
+        1 / min(traits[t].thresholds)
+        for t in champ.traits
+        if t in traits and t != IGNORED_TRAIT
+    )
 
 
 def upper_bound(trait_counts, traits, remain):
@@ -73,9 +77,26 @@ def upper_bound(trait_counts, traits, remain):
 
 
 # ===== SOLVER =====
-def solve(max_team, time_limit, forced, banned, emblems):
+def solve(max_team, time_limit, forced, banned, emblems, lux_trait=None):
     traits = load_traits()
     champions = load_champions(banned)
+
+    # ===== LUX ASPECT =====
+    # Lux (Thế Thần) có thể chọn 1 trong 9 hệ
+    # Khi chọn hệ, Lux được tính 2 mốc tộc/hệ đó
+    lux_champ = None
+    if lux_trait:
+        for c in champions:
+            if c.name == "Lux":
+                c.traits = [lux_trait]
+                lux_champ = c
+                break
+
+    def trait_count_for(champ, t):
+        """Lux đếm 2 mốc cho trait đã chọn, các tướng khác đếm 1"""
+        if lux_champ is not None and champ is lux_champ and t == lux_trait:
+            return 2
+        return 1
 
     champions.sort(
         key=lambda c: champion_value(c, traits),
@@ -112,8 +133,10 @@ def solve(max_team, time_limit, forced, banned, emblems):
     for c in forced_champs:
         team.append(c)
         for t in c.traits:
+            if t not in traits:
+                continue
             before = trait_counts.get(t, 0)
-            trait_counts[t] = before + 1
+            trait_counts[t] = before + trait_count_for(c, t)
             if (
                 t != IGNORED_TRAIT
                 and before < min(traits[t].thresholds) <= trait_counts[t]
@@ -134,6 +157,10 @@ def solve(max_team, time_limit, forced, banned, emblems):
 
     # ===== VALID TEAM =====
     def valid_team(team):
+        if not team:
+            return False
+        if not any(c.roles for c in champions):
+            return True
         tank, carry = count_roles(team)
         return tank >= MIN_TANK and carry >= MIN_CARRY
 
@@ -160,9 +187,10 @@ def solve(max_team, time_limit, forced, banned, emblems):
             return
 
         # --- role bound ---
-        tank, carry = count_roles(team)
-        if tank + remain_slot < MIN_TANK or carry + remain_slot < MIN_CARRY:
-            return
+        if any(c.roles for c in champions):
+            tank, carry = count_roles(team)
+            if tank + remain_slot < MIN_TANK or carry + remain_slot < MIN_CARRY:
+                return
 
         # --- save only valid team ---
         if valid_team(team):
@@ -179,8 +207,10 @@ def solve(max_team, time_limit, forced, banned, emblems):
         updated = []
 
         for t in c.traits:
+            if t not in traits:
+                continue
             before = trait_counts.get(t, 0)
-            trait_counts[t] = before + 1
+            trait_counts[t] = before + trait_count_for(c, t)
             if (
                 t != IGNORED_TRAIT
                 and before < min(traits[t].thresholds) <= trait_counts[t]
@@ -192,7 +222,7 @@ def solve(max_team, time_limit, forced, banned, emblems):
 
         # rollback
         for t in updated:
-            trait_counts[t] -= 1
+            trait_counts[t] -= trait_count_for(c, t)
             if trait_counts[t] == 0:
                 del trait_counts[t]
         team.pop()

@@ -8,28 +8,9 @@ import json
 
 # Import solvers
 from bronze import solve as solve_bronze
-from ryze import solve as solve_ryze
 
 # ===== DEFAULT giống PyQt =====
-DEFAULT_BANNED_CHAMPIONS = [
-    "Aatrox",
-    "Aphelios",
-    "Zoe",
-    "Leona",
-    "Diana",
-    "T-Hex",
-    "Yone",
-    "Baron Nashor",
-    "Zaahen",
-    "Brock",
-    "Galio",
-    "Aurelion Sol",
-    "Tahm Kench",
-    "Gwen",
-    "Kalista",
-    "Thresh",
-    "Veigar",
-]
+DEFAULT_BANNED_CHAMPIONS = []
 
 DEFAULT_FORCED_CHAMPIONS = []
 
@@ -68,7 +49,8 @@ def load_champions_data():
             "traits": c["traits"],
             "roles": c.get("roles", []),
             "locked": c.get("locked", False),
-            "image": image_path
+            "image": image_path,
+            "aspect_options": c.get("aspect_options", [])
         })
 
     return result
@@ -115,28 +97,9 @@ def get_champions():
 
 
 VALID_EMBLEMS = {
-    "Bilgewater",
-    "Chinh Phạt",
-    "Cảnh Vệ",
-    "Cực Tốc",
-    "Demacia",
-    "Dũng Sĩ",
-    "Freljord",
-    "Hư Không",
-    "Ionia",
-    "Ixtal",
-    "Nhiễu Loạn",
-    "Noxus",
-    "Pháp Sư",
-    "Piltover",
-    "Thuật Sĩ",
-    "Viễn Kích",
-    "Vệ Quân",
-    "Yordle",
-    "Zaun",
-    "Đấu Sĩ",
-    "Đồ Tể",
-    "Xạ Thủ"
+    "Tiên Hắc Ám", "Tiên Linh", "Thợ Săn", "Hỏa Ngục", "Liên Xạ",
+    "Thần Rừng", "Đồ Tể", "Tinh Nghịch", "Tiên Phong", "Hoa Linh",
+    "Thuật Sĩ", "Nguyệt Tộc", "Mặt Trăng", "Đấu Sĩ", "Dũng Sĩ",
 }
 
 @app.route("/api/traits", methods=["GET"])
@@ -199,15 +162,21 @@ def solve():
             if k in VALID_EMBLEMS and int(v) > 0
         }
 
+        # Lux Aspect (Thế Thần) - chọn 1 trong 9 hệ
+        lux_trait = data.get("lux_trait")
+        if lux_trait not in [
+            "Gai Đen", "Hoa Linh", "Hỏa Ngục", "Mặt Trăng",
+            "Mặt Trời", "Nguyên Sinh", "Thần Rừng", "Tiên Hắc Ám", "Tiên Linh"
+        ]:
+            lux_trait = None
 
-        solver = solve_bronze if solver_type == "bronze" else solve_ryze
-
-        result = solver(
+        result = solve_bronze(
             max_team=max_team,
             time_limit=time_limit,
             forced=list(forced),
             banned=list(banned),
-            emblems=emblems
+            emblems=emblems,
+            lux_trait=lux_trait
         )
 
         formatted = []
